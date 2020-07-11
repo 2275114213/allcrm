@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/dist/css/bootstrap.css">
+
+    <link rel="stylesheet" href="/static/node_modules/selfwrite.css">
+     <script src="/static/node_modules/jquery/dist/jquery.js"></script>
+    <script src="/static/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+</head>
+<body>
+     <div class="modal-body">
+
+            {% csrf_token %}
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-2">
+                        <form >
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <lable id="user" >用户名</lable>
+            {#                    一定要设name#}
+                                <input type="text" placeholder="请输入用户名"  class="form-control" name="user" id="user">
+                            </div>
+                            <div class="form-group">
+                                <lable id="pwd" >密码</lable>
+            {#                    一定要设name#}
+                                <input type="password" placeholder="请输入密码" class="form-control" name="pwd" id="pwd">
+                            </div>
+                             <div class="form-group">
+                                <lable id="validcode" >验证码</lable>
+
+                                 <div class= 'row'>
+                                    <div class="col-md-6">
+                                        <input type="text" placeholder="请输入验证码" class="form-control" name="validcode" id="validcode">
+                                    </div>
+                                     <div class="col-md-4">
+                                            <img id="valid_code_img" src="/get_valid_img/" pk='yanzhengma' width="180px" height="35px" alt="">
+                                     </div>
+                                     <div class="col-md-2">
+                                         <a href="javascript:void(0)" class="btn btn-success changebtn">换一张</a>
+                                     </div>
+                                 </div>
+
+{#                                一定要设name#}
+                            </div>
+                            <p><span style="color: red" id="error"></span></p>
+                                <input type="button" value="提交" class="btn btn-danger loginbtn">
+                                <a href="/reg/" type="button" class="btn btn-danger">还没有注册点我,注册</a>
+                                <a href="/index/" type="button" class="btn btn-danger ">返回首页</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+     </div>
+</body>
+<script>
+    $(".loginbtn").click(function () {
+        alert(111)
+
+        $.ajax({
+            url:'/login/',
+            type:'post',
+            data:{
+                user:$('[name=user]').val(),
+                pwd:$('[name=pwd]').val(),
+                validcode:$('[name=validcode]').val(),
+                csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+            },
+            success:function (resonse) {
+                ret=JSON.parse(resonse);
+                console.log(ret)
+                if (ret.error){
+                   $("#error").html(ret.error)
+                }
+                else{
+                    location.href='/index/'
+                }
+            }
+        })
+    })
+    $('.changebtn').click(function () {
+         $('[pk=yanzhengma]')[0].src+='?'
+    })
+</script>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/bootstrap-3.3.7/dist/css/bootstrap.css">
+    <script src="/static/node_modules/jquery/dist/jquery.js"></script>
+    <style>
+        .error{
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h3>欢迎注册</h3>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-2">
+                <form novalidate>
+                {% csrf_token %}
+                  {% for field in form %}
+                        <div class="form-group">
+                             <label for="title">{{ field.label }}</label>
+                             {{ field }}
+                             <span class="error"></span>
+{#                             {% if field.label == '密码' %}#}
+{#                                <div class="form-group">#}
+{#                                     <label for="title" style="margin-top:10px ">确认密码</label>#}
+{#                                     <input type="password"   class="form-control" name="r_pwd" id="id_r_pwd">#}
+{#                                     <span class="error"></span>#}
+{#                                 </div>#}
+{#                             {% endif %}#}
+
+                        </div>
+                 {% endfor %}
+    </form>
+    <input type="button" id="regbtn" value="提交" class="btn btn-success  pull-right">
+            </div>
+        </div>
+    </div>
+    <script>
+
+{#        写函数#}
+        $('#regbtn').click(function () {
+           $.ajax({
+               url:'/reg/',
+               type:'post',
+               data:{
+                   username:$('[name=username]').val(),
+                   password:$('[name=password]').val(),
+                   r_pwd:$('[name=r_pwd]').val(),
+                   email:$('[name=email]').val(),
+                   gender:$('[name=gender]').val(),
+                   tel:$('[name=tel]').val(),
+                   csrfmiddlewaretoken:$("[name='csrfmiddlewaretoken']").val()
+               },
+               success:function (response) {
+                   if (response.user) {
+                       console.log(response)
+                    location.href='/login/'
+                   } else {
+                       console.log(response);
+                       $("span").html("")
+                       $.each(response.errors, function (i, j) {
+                           $('#id_' + i).next('span').html(j)
+                       })
+                   }
+               }
+           })
+        })
+    </script>
+
+</body>
+
+
+</html>

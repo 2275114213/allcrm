@@ -1,0 +1,23 @@
+{% block css %}
+    <style>
+    .self,.self a,.self span{
+        background-color: #2F72AB;
+        color: lightcyan;
+        font-size: 16px;
+    }
+    .self {
+        list-style: none;
+        padding: 5px;
+    }
+    </style>
+{% endblock %}
+<li class="self">
+{% for foo in breadcrumb%}
+
+            <a   href="{{ foo.url }}">{{ foo.title }}</a>
+            {% if not forloop.last %}
+            <span>&gt;</span>
+            {% endif %}
+
+{% endfor %}
+</li>

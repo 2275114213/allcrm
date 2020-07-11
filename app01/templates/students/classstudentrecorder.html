@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block content %}
+ <div class="content-wrapper">
+ {% load my %}
+ {% bread request %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h3 class="change">
+               班级学习记录
+            </h3>
+
+            <!--模糊查询的form 表单      完成-->
+{#            <form action=""  method="get" class="pull-right">#}
+{#                 <ol class="breadcrumb">#}
+{#                     <li>#}
+{##}
+{#                         select里必须随便写个name给作为键去组成#}
+{#                       <select name="field" id="s1" class="form-control" style="display: inline-block;width: 110px">#}
+{#                            <option value="name">姓名</option>#}
+{#                            <option value="sex">性别</option>#}
+{#                            <option value="qq">QQ</option>#}
+{#                            <option value="phone">手机号</option>#}
+{#                            <option value="source">客户来源</option>#}
+{#                            <option value="date">查询日期</option>#}
+{#                            <option value="status">状态</option>#}
+{#                            <option value="consultant">销售</option>#}
+{#                            <option value="class_list">已报班级</option>#}
+{#                      </select>#}
+{##}
+{#                <input style="height: 32px;width: 100px" placeholder="请输入关键字" type="text" name="q">#}
+{#                <input id="searchbtn" type= 'submit' style="height: 32px;width: 60px;vertical-align: 0px" class="btn btn-success " value="搜索">#}
+{#                 </li>#}
+{#                </ol>#}
+{#            </form>#}
+        </section>
+
+        <!-- Main content -->
+           <form action="" method="post">
+           {% csrf_token %}
+              <ol class="breadcrumb">
+                     <select name="action" id="" class="form-control" style="display: inline-block;width: 240px">
+                         <option value="">请选择批量处理方法</option>
+                         <option value="patch_create">批量创建学习记录</option>
+                         <option value="patch_delete">删除</option>
+                     </select>
+                    <button style="vertical-align: 0px" class="btn btn-danger">提交</button>
+            </ol>
+            <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                        {% load  my %}
+                            {% if "classstuadd"|showorhide:request %}
+                             <a style="font-size: 14px" href="{% url 'classstuadd' %}" class="box-title btn btn-success btn-sm">添加记录</a>
+                            {% endif %}
+
+                            <a style="font-size: 14px" class="box-title btn btn-warning btn-sm" id="allbtn">全选</a>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table  id="example2" class="text-center table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>选择</th>
+                                        <th>编号</th>
+                                        <th>班级</th>
+                                        <th>节次</th>
+                                        <th>讲师</th>
+                                        <th>考勤</th>
+                                        <th>录入成绩</th>
+                                        {% if "classstuedit"|showorhide:request or "classstudel"|showorhide:request %}
+                                        <th>操作</th>
+                                        {% endif %}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for eroll in ClassStudyRecord_list %}
+                                <tr>
+                                    <td><input type="checkbox" name="select_id" value="{{ eroll.pk }}"></td>
+                                    <td>{{ forloop.counter|add:pagination.num}}</td>
+                                    <td>{{ eroll.class_obj }}</td>
+                                    <td>{{ eroll.day_num}}</td>
+                                    <td>{{ eroll.teacher.username }}</td>
+                                    <td><a href="">考勤</a></td>
+                                    <td><a href="{% url "record_score" eroll.pk %}">录入成绩</a></td>
+{#                                    以前是这样的#}
+{#                                    <td>{% for customers in customers.class_list.all %}#}
+{#                                        <span>{{ customers }}</span>#}
+{#                                        {% if  not forloop.last %}#}
+{#                                            ,#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                    </td>#}
+{#                                新学了一种#}
+                                    {% if "classstuedit"|showorhide:request or "classstudel"|showorhide:request %}
+
+                                         <td>
+                                             {% if "classstuedit"|showorhide:request %}
+                                            <a href="{% url 'classstuedit' eroll.pk %}" class="btn btn-success btn-sm"> <i class="fa fa-edit  fa-lg"></i> </a>
+                                        {% endif %}
+                                         {% if "classstudel"|showorhide:request %}
+                                         <a href="{% url 'classstudel' eroll.pk %}" class="btn btn-success btn-sm"><i class="fa fa-trash-o fa-lg"></i> </a></td>
+                                            {% endif %}
+                                        {% endif %}
+
+                                </tr>
+                                {% endfor %}
+
+
+
+                                </tbody>
+                            </table>
+                            <nav aria-label="Page navigation" class="pull-right">
+                                  <ul class="pagination">
+                                        {{ pagination.page_html|safe }}
+                                  </ul>
+                            </nav>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+           </form>
+
+        <!-- /.content -->
+    </div>
+{% endblock %}

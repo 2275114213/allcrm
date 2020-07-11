@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="content-wrapper">
+         {% load my %}
+         {% bread request %}
+          <!-- Content Header (Page header) -->
+          <section class="content-header">
+              <h1>
+                  {% if obj %}
+                    编辑
+                {% else %}
+                    添加
+                {% endif %}
+                  <small>Optional description</small>
+              </h1>
+              <ol class="breadcrumb">
+                  <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+                  <li class="active">Here</li>
+              </ol>
+          </section>
+
+
+
+
+          <!-- Main content -->
+          <section class="content">
+
+            <div class="row">
+                  <div class="col-md-8 col-md-offset-2">
+                      <form action="" method="post">
+                      {% csrf_token %}
+                         {% for field in form %}
+                             <label for="">{{ field.label }}</label>
+                             {{ field }} <span>{{ form.errors.0 }}</span>
+                         {% endfor %}
+                            <button class="btn btn-default pull-right">提交</button>
+                      </form>
+                  </div>
+            </div>
+
+          </section>
+          <!-- /.content -->
+      </div>
+{% endblock %}

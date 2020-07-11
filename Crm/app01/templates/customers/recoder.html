@@ -1,0 +1,194 @@
+{% extends 'base.html' %}
+{% block content %}
+
+       <div class="content-wrapper">
+        {% load my %}
+         {% bread request %}
+        <!-- Content Header (Page header) -->
+        <section class="content-header">
+            <h3 class="change">
+                {{ lable }}
+            </h3>
+
+            <!--模糊查询的form 表单      完成-->
+            <form action=""  method="get" class="pull-right">
+                 <ol class="breadcrumb">
+                     <li>
+
+{#                         select里必须随便写个name给作为键去组成#}
+                       <select name="field" id="s1" class="form-control" style="display: inline-block;width: 110px">
+                            <option value="name">所咨询客户</option>
+                            <option value="note">跟进内容</option>
+                            <option value="status">跟进状态</option>
+                            <option value="date">跟进日期</option>
+                      </select>
+
+                <input style="height: 32px;width: 100px" placeholder="请输入关键字" type="text" name="q">
+                <input id="searchbtn" type="submit" style="height: 32px;width: 60px;vertical-align: 0px" class="btn btn-success " value="搜索">
+                 </li>
+                </ol>
+            </form>
+        </section>
+
+        <!-- Main content -->
+           <form action="" method="post">
+           {% csrf_token %}
+              <ol class="breadcrumb">
+                     <select name="action" id="" class="form-control" style="display: inline-block;width: 240px">
+                         <option value="">请选择批量处理方法</option>
+                         <option value="patch_delete">删除</option>
+                            <option class= "change1" value="patch_change_public">私户转公户</option>
+                     </select>
+                    <button style="vertical-align: 0px" class="btn btn-danger">提交</button>
+            </ol>
+            <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                             {% load my %}
+
+                                    {% if request.path == '/customer/recoder/public/' %}
+                                        {% if "addrecoder"|showorhide:request %}
+                                           <a style="font-size: 14px" href="{% url "addrecoder" %}{{ next }}" class="box-title btn btn-success btn-sm">添加记录</a>
+
+                                        {% endif %}
+                                {% endif %}
+                                {% if request.path == '/customer/recoder/self/' %}
+                                    {% if "addrecoder1"|showorhide:request %}
+                                        <a style="font-size: 14px" href="{% url "addrecoder" %}{{ next }}" class="box-title btn btn-success btn-sm">添加记录</a>
+
+                                    {% endif %}
+                            {% endif %}
+
+                            <a style="font-size: 14px" class="box-title btn btn-warning btn-sm" id="allbtn">全选</a>
+                        </div>
+                        <!-- /.box-header -->
+                        <div class="box-body">
+                            <table  id="example2" class="text-center table table-bordered table-hover">
+                                <thead>
+                                    <tr>
+                                            <th>选择</th>
+                                            <th>编号</th>
+                                            <th>客户姓名</th>
+                                            <th>当前状态</th>
+                                            <th>跟进内容</th>
+                                            <th>手机号</th>
+                                            <th>销售</th>
+                                             {% if request.path == '/customer/recoder/public/' %}
+                                            {% if "editrecoder1"|showorhide:request or "delrecoder1"|showorhide:request %}
+                                                <th>操作</th>
+                                            {% endif %}
+                                        {% endif %}
+                                            {% if request.path == '/customer/recoder/self/' %}
+                                            {% if "editrecoder1"|showorhide:request or "delrecoder1"|showorhide:request %}
+                                                <th>操作</th>
+                                            {% endif %}
+                                        {% endif %}
+
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                {% for recoder in recoder_list %}
+                                <tr>
+                                    <td><input type="checkbox" name="select_id" value="{{ recoder.pk }}"></td>
+                                    <td>{{ forloop.counter|add:pagination.num }}</td>
+                                    <td>{{ recoder.customer.name }}</td>
+{#                                  如果不加就显示元组sex_type = (('male', '男'), ('female', '女'))前面的值加了之后就显示后面的字段                                          #}
+                                    <td>{{ recoder.customer.get_status }}</td>
+                                    <td>{{ recoder.note }}</td>
+                                    <td>{{ recoder.phone|default:"暂无" }}</td>
+                                    <td>{{ recoder.consultant|default:"暂无" }}</td>
+
+                                      {% if request.path == '/customer/recoder/public/' %}
+                                            {% if "editrecoder1"|showorhide:request or "delrecoder1"|showorhide:request %}
+                                                <td>
+                                                  <a href="{% url "editrecoder" recoder.pk %}{{ next }}" class="btn btn-warning btn-sm">编辑</a>
+                                                  <a href="{% url "delrecoder" recoder.pk %}{{ next }}" class="btn btn-danger btn-sm">删除</a>
+                                              </td>
+                                            {% endif %}
+                                        {% endif %}
+                                            {% if request.path == '/customer/recoder/self/' %}
+                                            {% if "editrecoder1"|showorhide:request or "delrecoder1"|showorhide:request %}
+                                                <td>
+                                                  <a href="{% url "editrecoder" recoder.pk %}{{ next }}" class="btn btn-warning btn-sm">编辑</a>
+                                                  <a href="{% url "delrecoder" recoder.pk %}{{ next }}" class="btn btn-danger btn-sm">删除</a>
+                                              </td>
+                                            {% endif %}
+                                        {% endif %}
+
+{#                                    以前是这样的#}
+{#                                    <td>{% for customers in customers.class_list.all %}#}
+{#                                        <span>{{ customers }}</span>#}
+{#                                        {% if  not forloop.last %}#}
+{#                                            ,#}
+{#                                        {% endif %}#}
+{#                                    {% endfor %}#}
+{#                                    </td>#}
+{#                                新学了一种#}
+
+
+                                </tr>
+                                {% endfor %}
+
+
+
+                                </tbody>
+                            </table>
+                            <nav aria-label="Page navigation" class="pull-right">
+                                  <ul class="pagination">
+                                        {{ pagination.page_html|safe }}
+                                  </ul>
+                            </nav>
+                        </div>
+                        <!-- /.box-body -->
+                    </div>
+                </div>
+                <!-- /.col -->
+            </div>
+            <!-- /.row -->
+        </section>
+           </form>
+
+        <!-- /.content -->
+    </div>
+
+{% endblock %}
+{% block js %}
+{#    如果搜索字段是状态和性别,完美#}
+    <script>
+        $('#s1').change(function () {
+            $(this).next().replaceWith("<input style=\"height: 32px;width: 100px\"  type=\"text\" name=\"q\">")
+           if($(this).val()==='sex'){
+              s1={'female':'女','male':'男'}
+           $(this).next().replaceWith('<select name="q" id="s2" class="form-control" style="display: inline-block;width: 100px" </select>')
+           $.each(s1,function(i,j){
+                $("#s2").append("<option value="+i+ ">"+j+"</option>")
+                                 })
+           }
+           if($(this).val()==='status'){
+            {#enroll_status_choices = (('signed', "已报名"),#}
+            {#             ('unregistered', "未报名"),#}
+            {#             ('studying', '学习中'),#}
+            {#             ('paid_in_full', "学费已交齐"),)#}
+               enroll_status_choices={"signed":'已报名',"unregistered":'未报名',"studying":"学习中","paid_in_full":'学费已交齐'}
+             $(this).next().replaceWith('<select name="q" id="s2" class="form-control" style="display: inline-block;width: 100px"><option></option></select>')
+           $.each(enroll_status_choices,function(i,j){
+                $("#s2").append("<option value="+i+ ">"+j+"</option>")
+                                 })
+           }
+
+        })
+        $("#allbtn").click(function () {
+            if ( $('input[type=checkbox]').is(':checked')){
+                $('input[type=checkbox]').attr("checked",false)
+            }else{
+                $('input[type=checkbox]').attr("checked",true)
+            }
+        })
+
+
+
+    </script>
+{% endblock %}
